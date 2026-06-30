@@ -14,7 +14,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Extract changelog section
+        id: changelog
+        run: |
+          # Extract the section between the first two version headings
+          body=$(awk '/^## \[[0-9]/{found++} found==1{print} found==2{exit}' CHANGELOG.md)
+          {
+            echo "body<<EOF"
+            echo "$body"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.body }}
