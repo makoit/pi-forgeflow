@@ -1,0 +1,42 @@
+{
+  "name": "@martinkovacs/pi-forgeflow",
+  "version": "0.1.0",
+  "description": "ForgeFlow — a Pi package for professional software engineering workflows covering intake, specification, architecture, implementation, verification, review, and release.",
+  "keywords": [
+    "pi-package",
+    "forgeflow",
+    "software-engineering",
+    "workflow",
+    "agents",
+    "skills"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makoit/pi-forgeflow.git"
+  },
+  "files": [
+    "skills/",
+    "prompts/",
+    "extensions/",
+    "themes/",
+    "examples/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "skills": [
+      "skills/caveman",
+      "skills/grill-me",
+      "skills/ralph",
+      "skills/to-adr",
+      "skills/to-issue",
+      "skills/to-prd"
+    ]
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "pack:check": "npm pack --dry-run"
+  }
+}
