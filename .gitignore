@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tgz
+.DS_Store
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# ForgeFlow workflow artifacts — commit or ignore based on team preference
+# forge/
