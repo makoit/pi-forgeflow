@@ -1,6 +1,6 @@
 # ForgeFlow
 
-[![GitHub release](https://img.shields.io/github/v/release/makoit/pi-forgeflow)](https://github.com/makoit/pi-forgeflow/releases)
+[![version](https://img.shields.io/badge/version-0.1.1-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.1.1)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/makoit/pi-forgeflow/blob/main/LICENSE)
 
 **ForgeFlow** is a Pi package for professional software engineering workflows.
