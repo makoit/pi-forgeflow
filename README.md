@@ -20,13 +20,19 @@ Ships six skills covering the full engineering lifecycle: compressed communicati
 Install ForgeFlow into your Pi environment directly from GitHub:
 
 ```bash
-pi install github:makoit/pi-forgeflow
+pi install git:github.com/makoit/pi-forgeflow
+```
+
+Or using an HTTPS URL:
+
+```bash
+pi install https://github.com/makoit/pi-forgeflow
 ```
 
 To pin to a specific release:
 
 ```bash
-pi install makoit/pi-forgeflow#v0.1.0
+pi install git:github.com/makoit/pi-forgeflow@v0.1.0
 ```
 
 Verify the package is loaded:

@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-01
+
+### Fixed
+
+- Corrected installation instructions in `README.md` to use valid `pi install` URL formats (`git:github.com/makoit/pi-forgeflow` and `https://github.com/makoit/pi-forgeflow`). The previous `github:` shorthand and `#ref` syntax are not supported by the Pi CLI.
+
 ## [0.1.0] - 2026-06-30
 
 Initial public release of **ForgeFlow** — a Pi package for professional software engineering workflows.
