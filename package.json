@@ -1,6 +1,6 @@
 {
   "name": "@martinkovacs/pi-forgeflow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ForgeFlow — a Pi package for professional software engineering workflows covering intake, specification, architecture, implementation, verification, review, and release.",
   "keywords": [
     "pi-package",
