@@ -1,6 +1,6 @@
 # ForgeFlow
 
-[![version](https://img.shields.io/badge/version-0.4.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.4.0)
+[![version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.5.0)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/makoit/pi-forgeflow/blob/main/LICENSE)
 
 **ForgeFlow** is a Pi package for professional software engineering workflows.
@@ -9,9 +9,9 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 ## Current Release
 
-**v0.4.0** — adds `forge-new` skill for cycle management: archive or discard a completed workflow cycle and start fresh. All workflow artifacts now live under `forge/current/`, with completed cycles archived to `forge/archive/`. Guards in `grill-me`, `to-prd`, and `to-issue` detect leftover artifacts and prompt before overwriting.
+**v0.5.0** — adds `create-agents-md` skill: an interactive scaffold that generates a complete, project-specific `AGENTS.md` at the repository root. Auto-detects stack details (language, package manager, test framework, linter, CI/CD, deployment target) from files on disk, then asks 14 focused questions covering project purpose, type, commands, key directories, agent mission, git conventions, and deployment. Fully technology-agnostic — works with any language or ecosystem.
 
-Ships eight skills covering the full engineering lifecycle: a one-command chain, cycle management, compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
+Ships nine skills covering the full engineering lifecycle: a one-command chain, cycle management, compressed communication, teaching mode, design review, PRD authoring, issue tracking, automated issue implementation, and interactive `AGENTS.md` scaffolding.
 
 📋 [Full changelog →](CHANGELOG.md)
 
@@ -67,6 +67,29 @@ Pi:  Mode active.
 You: why is my background job processing orders out of order?
 Pi:  Queue lack ordering guarantee. Use priority queue or add sequence field + sort on consume.
 ```
+
+### create-agents-md
+
+Scaffolds a complete `AGENTS.md` at the repository root by interviewing the developer and auto-detecting stack details. Before asking questions, the skill scans for lockfiles, config files, and directory structure to pre-fill answers — the developer only confirms or corrects. A guard detects an existing `AGENTS.md` and offers to overwrite or update it.
+
+**Covers:** project name & purpose, primary language(s), package manager, test framework, linter/formatter, build tool, key directories, agent mission, and project-specific rules.
+
+**Invoke:** say `create agents md`, `generate agents.md`, `init agents`, `set up agents file`, or `/create-agents-md`
+
+```
+You: /create-agents-md
+Pi:  Auto-detected: Language: Java · Build: Maven · Test framework: JUnit 5 · CI: GitHub Actions
+
+     Q1: What is this project and who is it for?
+You: A backend service for processing insurance claims, used by our operations team.
+Pi:  Q2: What kind of project is this — web API, library, CLI tool, or something else?
+You: REST API, Spring Boot
+     ...
+Pi:  ✅ AGENTS.md written to the repository root.
+     Sections: Project · Agent Mission · Repository Structure · Tech Stack · Development Commands · Working Principles · Testing and Validation · Definition of Done
+```
+
+---
 
 ### learn
 
@@ -335,6 +358,7 @@ ForgeFlow supports seven phases:
 │   └── archive/          # ← completed cycles (YYYY-MM-DD-<slug>/)
 ├── skills/               # Pi skills (each with a SKILL.md)
 │   ├── caveman/
+│   ├── create-agents-md/
 │   ├── forge-chain/
 │   ├── forge-new/
 │   ├── grill-me/

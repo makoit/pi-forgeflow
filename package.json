@@ -1,6 +1,6 @@
 {
   "name": "@martinkovacs/pi-forgeflow",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "ForgeFlow — a Pi package for professional software engineering workflows covering intake, specification, architecture, implementation, verification, review, and release.",
   "keywords": [
     "pi-package",
@@ -28,6 +28,7 @@
   "pi": {
     "skills": [
       "skills/caveman",
+      "skills/create-agents-md",
       "skills/forge-chain",
       "skills/forge-new",
       "skills/grill-me",
