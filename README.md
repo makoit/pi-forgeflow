@@ -1,6 +1,6 @@
 # ForgeFlow
 
-[![version](https://img.shields.io/badge/version-0.1.1-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.1.1)
+[![version](https://img.shields.io/badge/version-0.2.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.2.0)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/makoit/pi-forgeflow/blob/main/LICENSE)
 
 **ForgeFlow** is a Pi package for professional software engineering workflows.
@@ -9,7 +9,7 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 ## Current Release
 
-**v0.1.1** — bug fix release.
+**v0.2.0** — adds `learn` skill, reworks `to-issue` as a tracer-bullet vertical slice issuer, tightens `to-prd`, and removes `to-adr`.
 
 Ships six skills covering the full engineering lifecycle: compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
 
