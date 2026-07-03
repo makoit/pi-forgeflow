@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-03
+
+### Added
+
+- `forge-new` skill — cycle management for ForgeFlow. Archives the current `forge/current/` cycle to `forge/archive/YYYY-MM-DD-<slug>/` (or discards it) and resets `forge/current/` for a new idea. Updates `forge/README.md` cycle index on archive. Can be invoked at any time — mid-process or after a completed chain.
+- `forge/README.md` — auto-maintained index of all cycles (active + archived).
+
+### Changed
+
+- All workflow artifacts moved from `forge/` root to `forge/current/`: `decisions.md`, `prd.md`, `issues/`, `chain.md`. This isolates the active cycle and enables clean archiving.
+- `forge-chain` — updated all paths to `forge/current/`. Extended Step 0: detects leftover artifacts before first run and invokes `forge-new` inline. New "Chain complete" state offers to start a new cycle instead of silently stopping.
+- `grill-me` — added guard: detects existing `forge/current/decisions.md` and prompts to continue, archive, or discard before starting a new interview.
+- `to-prd` — updated paths. Added guard for conflicting `prd.md` from a different feature.
+- `to-issue` — updated paths. Added guard for existing issues in `forge/current/issues/`.
+- `ralph` — updated example paths to `forge/current/issues/`.
+
 ## [0.3.0] - 2026-07-03
 
 ### Added

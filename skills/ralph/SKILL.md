@@ -16,7 +16,7 @@ Ralph iterates over every `.md` file in a given directory. For each file it:
 
 ## Input artifact
 
-Point ralph at the `forge/issues/` directory produced by `to-issue`. Each file should have the frontmatter:
+Point ralph at the `forge/current/issues/` directory produced by `to-issue`. Each file should have the frontmatter:
 
 ```markdown
 ---
@@ -32,14 +32,14 @@ Ralph only processes files where `status` is `todo` or `in-progress`. Files with
 
 ```bash
 # With Pi (default)
-python skills/ralph/ralph.py --directory ./forge/issues
+python skills/ralph/ralph.py --directory ./forge/current/issues
 
 # With a specific model
-python skills/ralph/ralph.py --directory ./forge/issues --model gpt-5.4:medium
+python skills/ralph/ralph.py --directory ./forge/current/issues --model gpt-5.4:medium
 
 # With a different agent CLI
-python skills/ralph/ralph.py --directory ./forge/issues --cli "co --provider github-copilot"
-python skills/ralph/ralph.py --directory ./forge/issues --cli "claude" --no-print
+python skills/ralph/ralph.py --directory ./forge/current/issues --cli "co --provider github-copilot"
+python skills/ralph/ralph.py --directory ./forge/current/issues --cli "claude" --no-print
 ```
 
 Options:

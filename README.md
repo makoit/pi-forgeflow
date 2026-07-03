@@ -1,6 +1,6 @@
 # ForgeFlow
 
-[![version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.3.0)
+[![version](https://img.shields.io/badge/version-0.4.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.4.0)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/makoit/pi-forgeflow/blob/main/LICENSE)
 
 **ForgeFlow** is a Pi package for professional software engineering workflows.
@@ -9,9 +9,9 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 ## Current Release
 
-**v0.3.0** — adds `forge-chain` skill: a one-command orchestrator that runs the full pipeline (`grill-me` → `to-prd` → `to-issue` → `ralph`), detects the current phase from `forge/` artifacts, and resumes automatically across sessions.
+**v0.4.0** — adds `forge-new` skill for cycle management: archive or discard a completed workflow cycle and start fresh. All workflow artifacts now live under `forge/current/`, with completed cycles archived to `forge/archive/`. Guards in `grill-me`, `to-prd`, and `to-issue` detect leftover artifacts and prompt before overwriting.
 
-Ships seven skills covering the full engineering lifecycle: a one-command chain, compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
+Ships eight skills covering the full engineering lifecycle: a one-command chain, cycle management, compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
 
 📋 [Full changelog →](CHANGELOG.md)
 
@@ -86,7 +86,7 @@ Pi:  [writes the test, then walks through what each assertion checks and why it 
 
 Interviews you relentlessly about a plan or design, walking down every branch of the decision tree. Each question comes with a recommended answer. Useful for stress-testing an idea before committing to it.
 
-When the interview is complete, Pi writes **`forge/decisions.md`** — a structured table of every question, chosen answer, and rationale. This file is the input for `to-prd`.
+When the interview is complete, Pi writes **`forge/current/decisions.md`** — a structured table of every question, chosen answer, and rationale. This file is the input for `to-prd`.
 
 **Invoke:** say `grill me on this`, `stress-test this plan`, or `use grill-me`
 
@@ -96,73 +96,89 @@ Pi:  Q1: How many teams will commit to this repo simultaneously?
      Recommended: ≤3 for low coordination overhead.
 ...
 [all branches resolved]
-Pi:  Writing forge/decisions.md...
+Pi:  Writing forge/current/decisions.md...
 ```
 
 ### to-prd
 
-Reads `forge/decisions.md` as primary input and synthesises everything into a structured PRD. Explores the codebase, identifies test seams, and checks them with you before finalising. Saves the result as **`forge/prd.md`** and publishes it to the issue tracker.
+Reads `forge/current/decisions.md` as primary input and synthesises everything into a structured PRD. Explores the codebase, identifies test seams, and checks them with you before finalising. Saves the result as **`forge/current/prd.md`** and publishes it to the issue tracker.
 
 **Invoke:** say `write a PRD for this`, `turn this into a PRD`, or `use to-prd`
 
 ```
 You: use to-prd
-Pi:  [reads forge/decisions.md, explores repo, drafts PRD]
+Pi:  [reads forge/current/decisions.md, explores repo, drafts PRD]
      [checks proposed test seams with you]
-     [writes forge/prd.md, publishes tracker issue]
+     [writes forge/current/prd.md, publishes tracker issue]
 ```
 
 ### to-issue
 
-Reads `forge/prd.md` and breaks the plan into independently-grabbable vertical slice issues. Presents the proposed breakdown, quizzes you on granularity and dependencies, then publishes each approved issue to the tracker and saves a local copy under **`forge/issues/<slug>.md`** — the exact format ralph expects.
+Reads `forge/current/prd.md` and breaks the plan into independently-grabbable vertical slice issues. Presents the proposed breakdown, quizzes you on granularity and dependencies, then publishes each approved issue to the tracker and saves a local copy under **`forge/current/issues/<slug>.md`** — the exact format ralph expects.
 
 **Invoke:** say `create issues from this`, `break this into issues`, or `use to-issue`
 
 ```
 You: use to-issue
-Pi:  [reads forge/prd.md, proposes vertical slices]
+Pi:  [reads forge/current/prd.md, proposes vertical slices]
      [quiz: "Does the granularity feel right?"]
-     [on approval: publishes issues, writes forge/issues/*.md]
+     [on approval: publishes issues, writes forge/current/issues/*.md]
 ```
 
 ### ralph
 
-Runs an automated agent loop over every `.md` file in a directory. For each issue it calls the Pi CLI to implement the described work, runs tests, and marks the issue `done` when verified. Produces an **`forge/issues/agent.<slug>.md`** audit file per issue.
+Runs an automated agent loop over every `.md` file in a directory. For each issue it calls the Pi CLI to implement the described work, runs tests, and marks the issue `done` when verified. Produces a **`forge/current/issues/agent.<slug>.md`** audit file per issue.
 
 **Invoke:** say `use ralph` or run `ralph.py` directly:
 
 ```bash
 # Default (uses co CLI)
-python skills/ralph/ralph.py --directory ./forge/issues
+python skills/ralph/ralph.py --directory ./forge/current/issues
 
 # With a specific agent CLI
-python skills/ralph/ralph.py --directory ./forge/issues --cli "pi"
-python skills/ralph/ralph.py --directory ./forge/issues --cli "co" --model gpt-5.4:medium
+python skills/ralph/ralph.py --directory ./forge/current/issues --cli "pi"
+python skills/ralph/ralph.py --directory ./forge/current/issues --cli "co" --model gpt-5.4:medium
 
 # For CLIs that do not support --print (e.g. claude), add --no-print
-python skills/ralph/ralph.py --directory ./forge/issues --cli "claude" --no-print
+python skills/ralph/ralph.py --directory ./forge/current/issues --cli "claude" --no-print
+```
+
+### forge-new
+
+Archives the current workflow cycle to `forge/archive/` and resets `forge/current/` for a new idea. Can be invoked at any point — mid-process or after a completed chain. Offers archive (keeps history) or discard (clean delete) options.
+
+**Invoke:** say `forge new`, `start fresh`, `neue idee`, or `new feature`
+
+```
+You: forge new
+Pi:  Active cycle found: Auth System (started: 2026-07-03, Phase 3 done)
+     Artifacts: decisions.md ✓ | prd.md ✓ | issues: 4 (4 done)
+     [1] Archive & start new  [2] Discard & start new  [3] Cancel
+You: 1
+Pi:  ✅ Archived to forge/archive/2026-07-03-auth-system/
+     forge/current/ is clean. Start your new idea.
 ```
 
 ---
 
 ## Manual Pipeline
 
-The four workflow skills form a natural end-to-end sequence. Each step produces a Markdown artifact in `forge/` that becomes the structured input for the next — so you can close a session at any point and resume without losing context.
+The four workflow skills form a natural end-to-end sequence. Each step produces a Markdown artifact in `forge/current/` that becomes the structured input for the next — so you can close a session at any point and resume without losing context.
 
 ```
 idea
   │
   ▼
-① grill-me ──────────────────────── produces → forge/decisions.md
+① grill-me ──────────────────────── produces → forge/current/decisions.md
   │                                              │
   ▼                                              ▼
-② to-prd ──── reads forge/decisions.md ── produces → forge/prd.md
+② to-prd ──── reads forge/current/decisions.md ── produces → forge/current/prd.md
   │                                              │
   ▼                                              ▼
-③ to-issue ── reads forge/prd.md ────────── produces → forge/issues/<slug>.md
-  │                                                      + tracker issue
+③ to-issue ── reads forge/current/prd.md ────── produces → forge/current/issues/<slug>.md
+  │                                                          + tracker issue
   ▼
-④ ralph ───── reads forge/issues/*.md ───── produces → forge/issues/agent.<slug>.md
+④ ralph ───── reads forge/current/issues/*.md ── produces → forge/current/issues/agent.<slug>.md
   │
   ▼
 finished implementation
@@ -182,12 +198,12 @@ Once you understand the individual skills, `forge-chain` runs the entire pipelin
 
 | # | Phase | Skill | Type | Artifact |
 |---|-------|-------|------|----------|
-| 1 | Intake | grill-me | interactive | `forge/decisions.md` |
-| 2 | Specification | to-prd | automated | `forge/prd.md` |
-| 3 | Issue breakdown | to-issue | interactive | `forge/issues/*.md` |
-| 4 | Implementation | ralph | automated (opt-in) | `forge/issues/agent.*.md` |
+| 1 | Intake | grill-me | interactive | `forge/current/decisions.md` |
+| 2 | Specification | to-prd | automated | `forge/current/prd.md` |
+| 3 | Issue breakdown | to-issue | interactive | `forge/current/issues/*.md` |
+| 4 | Implementation | ralph | automated (opt-in) | `forge/current/issues/agent.*.md` |
 
-Interactive phases (1 and 3) pause after writing their artifact and prompt you to re-invoke. Phase 4 asks for explicit confirmation before writing code. Progress is tracked in `forge/chain.md` — the filesystem is the source of truth, so the chain can be resumed in a new session.
+Interactive phases (1 and 3) pause after writing their artifact and prompt you to re-invoke. Phase 4 asks for explicit confirmation before writing code. Progress is tracked in `forge/current/chain.md` — the filesystem is the source of truth, so the chain can be resumed in a new session.
 
 On first run, the chain offers **caveman mode** and explains the benefit before the interview begins.
 
@@ -198,24 +214,94 @@ You: /forge-chain
 Pi:  Caveman mode cuts token usage ~75% for long sessions. Enable it?
 You: yes
 Pi:  Mode active. Phase 1 — Intake. [grill-me interview begins, one question at a time]
-     ...all decisions resolved, forge/decisions.md written...
+     ...all decisions resolved, forge/current/decisions.md written...
      Phase 1 complete. Invoke the chain again to continue.
 
 You: /forge-chain
-Pi:  [Phase 2 — to-prd runs automatically → forge/prd.md written]
+Pi:  [Phase 2 — to-prd runs automatically → forge/current/prd.md written]
      Phase 2 complete. Invoke the chain again to continue.
 
 You: /forge-chain
-Pi:  [Phase 3 — to-issue quiz, approve breakdown → forge/issues/*.md written]
+Pi:  [Phase 3 — to-issue quiz, approve breakdown → forge/current/issues/*.md written]
      Phase 3 complete. Invoke the chain again to start implementation.
 
 You: /forge-chain
 Pi:  Ready to start automated implementation. Ralph will process all issues. Continue?
 You: yes
 Pi:  [Phase 4 — ralph implements all issues]
+     ✅ Chain complete. Would you like to start a new cycle?
 ```
 
+## Sessions, Interruptions, and New Ideas
 
+ForgeFlow is designed to survive interruptions and to support multiple ideas over time without losing prior work.
+
+### Stopping mid-process
+
+You can close a session at any point in the pipeline. All progress is stored as files in `forge/current/` — the filesystem is the source of truth, not the session.
+
+When you come back, just invoke the skill or chain again. It reads what exists and picks up where you left off:
+
+| What's in `forge/current/` | Where you resume |
+|---|---|
+| Nothing | Phase 1 — fresh start |
+| `decisions.md` only | Phase 2 — to-prd reads it |
+| `decisions.md` + `prd.md` | Phase 3 — to-issue reads prd.md |
+| Issues exist, some `todo` | Phase 4 — ralph skips `done`, retries the rest |
+| All issues `done` | Cycle complete — offered a new cycle |
+
+Ralph is also safe to re-run at any time. Issues already marked `status: done` are skipped; only pending or in-progress work is retried.
+
+### Starting a new idea
+
+When you have a new idea — whether the current cycle is finished or you simply want to abandon it — use `forge-new` to make a clean start.
+
+**If the previous cycle is finished:**
+
+```
+You: forge new
+Pi:  Active cycle found: Auth System (started: 2026-07-03, all phases done)
+     Artifacts: decisions.md ✓ | prd.md ✓ | issues: 4 (4 done)
+     [1] Archive & start new  [2] Discard & start new  [3] Cancel
+You: 1
+Pi:  ✅ Archived to forge/archive/2026-07-03-auth-system/
+     forge/current/ is clean. Start your new idea.
+```
+
+**If you want to abandon a cycle mid-process** (e.g., you've done intake and PRD, but the direction changed):
+
+```
+You: forge new
+Pi:  Active cycle found: Auth System (started: 2026-07-03, Phase 2 done)
+     Artifacts: decisions.md ✓ | prd.md ✓ | issues: none
+     [1] Archive & start new  [2] Discard & start new  [3] Cancel
+You: 1
+Pi:  ✅ Archived to forge/archive/2026-07-03-auth-system/
+     forge/current/ is clean. Start your new idea.
+```
+
+Archived cycles are stored in `forge/archive/` and remain readable. Agents can reference prior decisions, naming conventions, and architectural patterns from old cycles when starting something new.
+
+Alternatively, if you start `grill-me` or `forge-chain` while something is in `forge/current/`, the skill will detect the conflict and offer the same archive/discard choice automatically — no need to remember to run `forge-new` first.
+
+### Cycle history
+
+`forge/README.md` is maintained automatically and shows a table of all cycles:
+
+```
+| # | Topic          | Started    | Completed  | Path                                    |
+|---|----------------|------------|------------|-----------------------------------------|
+| 1 | Auth System    | 2026-07-03 | 2026-07-10 | archive/2026-07-03-auth-system/         |
+| 2 | Payment Flow   | 2026-07-15 | —          | current/                                |
+```
+
+### Known limitations
+
+- **One active cycle at a time.** ForgeFlow does not support parallel workstreams in the same repo. To work on two features concurrently, use separate Git branches — each has its own `forge/current/`.
+- **No restore.** Archived cycles are read-only reference material. There is no command to reactivate an archived cycle as the current one.
+- **Git as archive.** If you commit `forge/current/` to a feature branch, Git history already gives you free versioning. The `forge/archive/` mechanism is an alternative for teams that prefer everything in the working tree.
+
+---
 
 ## Engineering Lifecycle
 
@@ -240,13 +326,17 @@ ForgeFlow supports seven phases:
 │       └── release.yml   # Creates a GitHub Release on version tags
 ├── extensions/           # Executable extension code
 ├── forge/                # Workflow artifacts (commit or gitignore — team preference)
-│   ├── chain.md          # ← written by forge-chain (progress tracker)
-│   ├── decisions.md      # ← written by grill-me
-│   ├── prd.md            # ← written by to-prd
-│   └── issues/           # ← written by to-issue, read by ralph
+│   ├── README.md         # ← auto-maintained cycle index
+│   ├── current/          # ← active cycle (all skills read/write here)
+│   │   ├── chain.md      # ← written by forge-chain (progress tracker)
+│   │   ├── decisions.md  # ← written by grill-me
+│   │   ├── prd.md        # ← written by to-prd
+│   │   └── issues/       # ← written by to-issue, read by ralph
+│   └── archive/          # ← completed cycles (YYYY-MM-DD-<slug>/)
 ├── skills/               # Pi skills (each with a SKILL.md)
 │   ├── caveman/
 │   ├── forge-chain/
+│   ├── forge-new/
 │   ├── grill-me/
 │   ├── learn/
 │   ├── ralph/
