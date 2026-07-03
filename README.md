@@ -11,7 +11,7 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 **v0.2.0** — adds `learn` skill, reworks `to-issue` as a tracer-bullet vertical slice issuer, tightens `to-prd`, and removes `to-adr`.
 
-Ships six skills covering the full engineering lifecycle: compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
+Ships seven skills covering the full engineering lifecycle: a one-command chain, compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
 
 📋 [Full changelog →](CHANGELOG.md)
 
@@ -49,50 +49,9 @@ To install from the local repository (development):
 pi install .
 ```
 
-## Workflow: From Idea to Implementation
+## Skills
 
-The five skills form a natural end-to-end pipeline. Each step produces a Markdown artifact that becomes the structured input for the next step — so you can close a session at any point and resume without losing context.
-
-```
-idea
-  │
-  ▼
-① grill-me ──────────────────────── produces → forge/decisions.md
-  │                                              │
-  ▼                                              ▼
-② to-prd ──── reads forge/decisions.md ── produces → forge/prd.md
-  │                                              │
-  ▼                                              │
-③ to-issue ── reads forge/prd.md ────────── produces → forge/issues/<slug>.md
-  │                                                      + tracker issue
-  ▼
-④ ralph ───── reads forge/issues/*.md ───── produces → forge/issues/agent.<slug>.md
-  │
-  ▼
-finished implementation
-```
-
-> **Tips:**
-> - Activate `caveman` at any point in the pipeline to cut token usage by ~75%.
-> - Activate `learn` after any step — or after a full ralph loop — to get a teaching-mode walkthrough of what was built and why.
-
-**① grill-me — stress-test the idea**  
-Before writing anything down, let Pi interview you about every aspect of the idea. Each question comes with a recommended answer. Work through all branches until there are no open decisions. When complete, Pi writes **`forge/decisions.md`** — a structured table of every question, chosen answer, and rationale.
-
-**② to-prd — write the PRD**  
-`to-prd` reads `forge/decisions.md` as primary input and synthesises the conversation into a structured PRD. The result is saved as **`forge/prd.md`** and published to the issue tracker.
-
-**③ to-issue — publish the work item**  
-`to-issue` reads `forge/prd.md` and publishes the issue to the tracker with the `ready-for-agent` label. It also saves a local copy as **`forge/issues/<slug>.md`** with `status: todo` frontmatter — the exact format ralph expects.
-
-**④ ralph — implement**  
-`ralph` reads every `forge/issues/*.md` file where `status: todo`, calls the Pi CLI to implement the described work, runs tests, and sets `status: done` when verified. Each processed issue produces a **`forge/issues/agent.<slug>.md`** audit file.
-
----
-
-## Using ForgeFlow in Pi
-
-Once installed, ForgeFlow's skills are available in every Pi conversation. You invoke them by describing what you want — Pi will match the description and activate the skill automatically — or by calling them explicitly.
+Once installed, ForgeFlow's skills are available in every Pi conversation. Invoke them by describing what you want — Pi matches the description automatically — or call them explicitly by name.
 
 ### caveman
 
@@ -127,17 +86,48 @@ Pi:  [writes the test, then walks through what each assertion checks and why it 
 
 Interviews you relentlessly about a plan or design, walking down every branch of the decision tree. Each question comes with a recommended answer. Useful for stress-testing an idea before committing to it.
 
+When the interview is complete, Pi writes **`forge/decisions.md`** — a structured table of every question, chosen answer, and rationale. This file is the input for `to-prd`.
+
 **Invoke:** say `grill me on this`, `stress-test this plan`, or `use grill-me`
 
 ```
 You: grill me on my decision to use a monorepo
-Pi:  Q1: How many teams will commit to this repo simultaneously? (Recommended: ≤3 for low coordination overhead)
+Pi:  Q1: How many teams will commit to this repo simultaneously?
+     Recommended: ≤3 for low coordination overhead.
 ...
+[all branches resolved]
+Pi:  Writing forge/decisions.md...
+```
+
+### to-prd
+
+Reads `forge/decisions.md` as primary input and synthesises everything into a structured PRD. Explores the codebase, identifies test seams, and checks them with you before finalising. Saves the result as **`forge/prd.md`** and publishes it to the issue tracker.
+
+**Invoke:** say `write a PRD for this`, `turn this into a PRD`, or `use to-prd`
+
+```
+You: use to-prd
+Pi:  [reads forge/decisions.md, explores repo, drafts PRD]
+     [checks proposed test seams with you]
+     [writes forge/prd.md, publishes tracker issue]
+```
+
+### to-issue
+
+Reads `forge/prd.md` and breaks the plan into independently-grabbable vertical slice issues. Presents the proposed breakdown, quizzes you on granularity and dependencies, then publishes each approved issue to the tracker and saves a local copy under **`forge/issues/<slug>.md`** — the exact format ralph expects.
+
+**Invoke:** say `create issues from this`, `break this into issues`, or `use to-issue`
+
+```
+You: use to-issue
+Pi:  [reads forge/prd.md, proposes vertical slices]
+     [quiz: "Does the granularity feel right?"]
+     [on approval: publishes issues, writes forge/issues/*.md]
 ```
 
 ### ralph
 
-Runs an automated agent loop over a directory of Markdown issue files. For each `.md` file it calls the Pi CLI, implements the described issue, runs tests, and marks the issue `done` when verified.
+Runs an automated agent loop over every `.md` file in a directory. For each issue it calls the Pi CLI to implement the described work, runs tests, and marks the issue `done` when verified. Produces an **`forge/issues/agent.<slug>.md`** audit file per issue.
 
 **Invoke:** say `use ralph` or run `ralph.py` directly:
 
@@ -153,26 +143,79 @@ python skills/ralph/ralph.py --directory ./forge/issues --cli "co" --model gpt-5
 python skills/ralph/ralph.py --directory ./forge/issues --cli "claude" --no-print
 ```
 
-Issue files are plain Markdown. Ralph iterates until tests pass, then writes an `agent.<filename>.md` result file.
+---
 
-### to-issue
+## Manual Pipeline
 
-Converts the current conversation context and codebase understanding into a ready-for-implementation tracker issue and publishes it to the project issue tracker. Asks which tracker you use (GitHub Issues, GitLab, Jira, Linear, etc.) and which triage label to apply if not already known.
-
-**Invoke:** say `create issue from this`, `publish PRD`, or `use to-issue`
+The four workflow skills form a natural end-to-end sequence. Each step produces a Markdown artifact in `forge/` that becomes the structured input for the next — so you can close a session at any point and resume without losing context.
 
 ```
-You: use to-issue — we just agreed on the caching layer design
-Pi:  [explores repo, drafts issue body, publishes issue #42 with your team's triage label]
+idea
+  │
+  ▼
+① grill-me ──────────────────────── produces → forge/decisions.md
+  │                                              │
+  ▼                                              ▼
+② to-prd ──── reads forge/decisions.md ── produces → forge/prd.md
+  │                                              │
+  ▼                                              ▼
+③ to-issue ── reads forge/prd.md ────────── produces → forge/issues/<slug>.md
+  │                                                      + tracker issue
+  ▼
+④ ralph ───── reads forge/issues/*.md ───── produces → forge/issues/agent.<slug>.md
+  │
+  ▼
+finished implementation
 ```
 
-### to-prd
+Run each skill when the previous one has written its artifact. You control the pace and can intervene between steps.
 
-Same as `to-issue` but focused on producing the PRD document itself rather than publishing a tracker issue. Useful when you want to review the PRD before it becomes a ticket.
-
-**Invoke:** say `write a PRD for this`, `turn this into a PRD`, or `use to-prd`
+> **Tip:** Activate `caveman` at any point to cut token usage by ~75%. Use `learn` after any step — or after a full ralph loop — for a teaching-mode walkthrough of what was built and why.
 
 ---
+
+## Chain: Full Pipeline in One Command
+
+Once you understand the individual skills, `forge-chain` runs the entire pipeline for you. It detects which artifacts already exist in `forge/` and resumes from the correct phase automatically — no need to remember the sequence or which skill feeds which.
+
+**Phases:**
+
+| # | Phase | Skill | Type | Artifact |
+|---|-------|-------|------|----------|
+| 1 | Intake | grill-me | interactive | `forge/decisions.md` |
+| 2 | Specification | to-prd | automated | `forge/prd.md` |
+| 3 | Issue breakdown | to-issue | interactive | `forge/issues/*.md` |
+| 4 | Implementation | ralph | automated (opt-in) | `forge/issues/agent.*.md` |
+
+Interactive phases (1 and 3) pause after writing their artifact and prompt you to re-invoke. Phase 4 asks for explicit confirmation before writing code. Progress is tracked in `forge/chain.md` — the filesystem is the source of truth, so the chain can be resumed in a new session.
+
+On first run, the chain offers **caveman mode** and explains the benefit before the interview begins.
+
+**Invoke:** say `forge chain`, `run the chain`, `full workflow`, or `/forge-chain`
+
+```
+You: /forge-chain
+Pi:  Caveman mode cuts token usage ~75% for long sessions. Enable it?
+You: yes
+Pi:  Mode active. Phase 1 — Intake. [grill-me interview begins, one question at a time]
+     ...all decisions resolved, forge/decisions.md written...
+     Phase 1 complete. Invoke the chain again to continue.
+
+You: /forge-chain
+Pi:  [Phase 2 — to-prd runs automatically → forge/prd.md written]
+     Phase 2 complete. Invoke the chain again to continue.
+
+You: /forge-chain
+Pi:  [Phase 3 — to-issue quiz, approve breakdown → forge/issues/*.md written]
+     Phase 3 complete. Invoke the chain again to start implementation.
+
+You: /forge-chain
+Pi:  Ready to start automated implementation. Ralph will process all issues. Continue?
+You: yes
+Pi:  [Phase 4 — ralph implements all issues]
+```
+
+
 
 ## Engineering Lifecycle
 
@@ -197,11 +240,13 @@ ForgeFlow supports seven phases:
 │       └── release.yml   # Creates a GitHub Release on version tags
 ├── extensions/           # Executable extension code
 ├── forge/                # Workflow artifacts (commit or gitignore — team preference)
+│   ├── chain.md          # ← written by forge-chain (progress tracker)
 │   ├── decisions.md      # ← written by grill-me
 │   ├── prd.md            # ← written by to-prd
 │   └── issues/           # ← written by to-issue, read by ralph
 ├── skills/               # Pi skills (each with a SKILL.md)
 │   ├── caveman/
+│   ├── forge-chain/
 │   ├── grill-me/
 │   ├── learn/
 │   ├── ralph/

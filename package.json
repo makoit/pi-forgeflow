@@ -28,6 +28,7 @@
   "pi": {
     "skills": [
       "skills/caveman",
+      "skills/forge-chain",
       "skills/grill-me",
       "skills/learn",
       "skills/ralph",
