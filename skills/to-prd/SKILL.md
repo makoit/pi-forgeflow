@@ -1,11 +1,12 @@
 ---
 name: to-prd
-description: Turn the current conversation context into a PRD and publish it to the project issue tracker. Use when user wants to create a PRD from the current context.
+description: Turn the current conversation into a PRD and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.
+disable-model-invocation: true
 ---
 
 This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
 
-Before publishing, ask the user which issue tracker they use (GitHub Issues, GitLab Issues, Jira, Linear, etc.) and what triage label (if any) should be applied — unless this has already been established in the conversation.
+The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
 
 ## Input artifact
 
@@ -13,19 +14,17 @@ Before writing, check whether `forge/decisions.md` exists. If it does, read it a
 
 ## Process
 
-1. Explore the repo to understand the current state of the codebase, if you haven't already. If the codebase is empty or does not yet exist, skip this step and base the PRD on the conversation context alone. Use the project's domain glossary vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
+1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
 
-2. Sketch out the major modules you will need to build or modify to complete the implementation. Actively look for opportunities to extract deep modules that can be tested in isolation.
+2. Sketch out the seams at which you're going to test the feature. Existing seams should be preferred to new ones. Use the highest seam possible. If new seams are needed, propose them at the highest point you can. The fewer seams across the codebase, the better - the ideal number is one.
 
-A deep module (as opposed to a shallow module) is one which encapsulates a lot of functionality in a simple, testable interface which rarely changes.
+Check with the user that these seams match their expectations.
 
-Check with the user that these modules match their expectations. Check with the user which modules they want tests written for.
-
-3. Write the PRD using the template below, save it as `forge/prd.md`, then publish it to the project issue tracker. Apply the team's agreed triage label if one was provided (e.g., `ready-for-agent`, `ready-for-review`); skip the label if unknown.
+3. Write the PRD using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
 
 ## Output artifact
 
-Save the completed PRD as `forge/prd.md` before or alongside publishing to the tracker. Create the `forge/` directory if it does not exist. This file is the input for `to-adr` and `to-issue`.
+Save the completed PRD as `forge/prd.md` before or alongside publishing to the tracker. Create the `forge/` directory if it does not exist. This file is the input for `to-issue`.
 
 <prd-template>
 
