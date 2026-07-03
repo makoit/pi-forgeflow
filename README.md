@@ -11,7 +11,7 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 **v0.1.1** — bug fix release.
 
-Ships five skills covering the full engineering lifecycle: compressed communication, design review, PRD authoring, issue tracking, and automated issue implementation.
+Ships six skills covering the full engineering lifecycle: compressed communication, teaching mode, design review, PRD authoring, issue tracking, and automated issue implementation.
 
 📋 [Full changelog →](CHANGELOG.md)
 
@@ -72,7 +72,9 @@ idea
 finished implementation
 ```
 
-> **Tip:** activate `caveman` at any point in the pipeline to cut token usage by ~75%.
+> **Tips:**
+> - Activate `caveman` at any point in the pipeline to cut token usage by ~75%.
+> - Activate `learn` after any step — or after a full ralph loop — to get a teaching-mode walkthrough of what was built and why.
 
 **① grill-me — stress-test the idea**  
 Before writing anything down, let Pi interview you about every aspect of the idea. Each question comes with a recommended answer. Work through all branches until there are no open decisions. When complete, Pi writes **`forge/decisions.md`** — a structured table of every question, chosen answer, and rationale.
@@ -105,6 +107,20 @@ Pi:  Mode active.
 
 You: why is my background job processing orders out of order?
 Pi:  Queue lack ordering guarantee. Use priority queue or add sequence field + sort on consume.
+```
+
+### learn
+
+Activates teaching mode. Solves the task completely while also explaining how the solution works, why that approach was chosen, relevant tradeoffs, and key takeaways the developer can reuse. Works standalone or as a post-workflow explainer after a ralph loop.
+
+**Invoke:** say `learn`, `explain this`, `teach me`, `walk me through`, or `/learn`
+
+```
+You: /learn explain what ralph just implemented
+Pi:  [reads the codebase changes, explains each part — mechanics, design decisions, tradeoffs, and reusable patterns]
+
+You: /learn add a test for this function and explain each assertion
+Pi:  [writes the test, then walks through what each assertion checks and why it matters]
 ```
 
 ### grill-me
@@ -187,6 +203,7 @@ ForgeFlow supports seven phases:
 ├── skills/               # Pi skills (each with a SKILL.md)
 │   ├── caveman/
 │   ├── grill-me/
+│   ├── learn/
 │   ├── ralph/
 │   ├── to-issue/
 │   └── to-prd/
