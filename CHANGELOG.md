@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Removed
+
+- `to-adr` skill — Architecture Decision Records are out of scope for this workflow. The pipeline is now: `grill-me` → `to-prd` → `to-issue` → `ralph` (with optional `caveman` at any step).
+- `forge/adrs/` workflow directory (no longer needed).
+
 ## [0.1.1] - 2026-07-01
 
 ### Fixed
