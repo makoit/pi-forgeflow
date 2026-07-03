@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-03
+
+### Added
+
+- `create-agents-md` skill — interactive scaffold for generating a complete, project-specific `AGENTS.md` at the repository root. Auto-detects language, package manager, test framework, linter/formatter, build tool, CI/CD system, and deployment target from files on disk before asking any questions. Conducts a structured 14-question interview (one question at a time) covering: project name & purpose, project type, language, package manager, install/test/lint/build commands, key directories, agent mission, git/commit conventions, special rules, and deployment. Guards against overwriting an existing `AGENTS.md` — offers overwrite or update. Fully technology-agnostic: supports JS/TS, Java, Kotlin, Python, Rust, Go, C#/.NET, Ruby, PHP, Dart/Flutter, Elixir, Swift, C/C++, and any other stack.
+
+[0.5.0]: https://github.com/makoit/pi-forgeflow/compare/v0.4.0...v0.5.0
+
 ## [0.4.0] - 2026-07-03
 
 ### Added
