@@ -77,13 +77,13 @@ Ralph works well with issues produced by the [`to-issue`](../to-issue/) skill.
 ## Usage
 
 ```bash
-python skills/ralph/ralph.py --directory ./forge/issues
+python skills/ralph/ralph.py --directory ./forge/current/issues
 ```
 
 Or using the positional form:
 
 ```bash
-python skills/ralph/ralph.py ./forge/issues
+python skills/ralph/ralph.py ./forge/current/issues
 ```
 
 ### Options
@@ -103,7 +103,7 @@ python skills/ralph/ralph.py ./forge/issues
 For each processed issue `<name>.md`, ralph writes `agent.<name>.md` in the same directory:
 
 ```
-forge/issues/
+forge/current/issues/
 ├── 001-add-validation.md        ← issue (status updated to done by agent)
 ├── agent.001-add-validation.md  ← agent response / audit trail
 ├── 002-fix-login.md             ← issue (still todo, not yet processed)

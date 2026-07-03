@@ -14,7 +14,19 @@ Break a plan into independently-grabbable issues using vertical slices (tracer b
 
 Work from whatever is already in the conversation context. If the user passes an issue reference (issue number, URL, or path) as an argument, fetch it from the issue tracker and read its full body and comments.
 
-Check whether `forge/prd.md` exists. If it does, read it and use it as the primary source. Merge with the current conversation context. Do not re-derive information already captured there.
+Check whether `forge/current/prd.md` exists. If it does, read it and use it as the primary source. Merge with the current conversation context. Do not re-derive information already captured there.
+
+**Guard: check for existing issues**
+
+Check whether `forge/current/issues/` contains any `.md` files (excluding `.gitkeep`). If it does:
+
+> ⚠️ Issues from a previous session were found (N issues).
+>
+> **[1] Overwrite** — replace them with the new issue breakdown
+> **[2] Run forge-new first** — archive or discard the old cycle, then return here
+> **[3] Cancel**
+
+Wait for the user's choice before proceeding.
 
 ### 2. Explore the codebase (optional)
 
@@ -56,7 +68,7 @@ For each approved slice, publish a new issue to the issue tracker. Use the issue
 
 Publish issues in dependency order (blockers first) so you can reference real issue identifiers in the "Blocked by" field.
 
-After publishing, save each issue as a local Markdown file at `forge/issues/<kebab-case-title>.md`. Create `forge/issues/` if it does not exist. These files are the direct input for `ralph`.
+After publishing, save each issue as a local Markdown file at `forge/current/issues/<kebab-case-title>.md`. Create `forge/current/issues/` if it does not exist. These files are the direct input for `ralph`.
 
 Use this frontmatter in each local issue file:
 

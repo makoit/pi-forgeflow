@@ -6,9 +6,23 @@ disable-model-invocation: true
 
 This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
 
+## Guard: check for conflicting artifact
+
+Before writing, check whether `forge/current/prd.md` already exists.
+
+**If it exists**, compare its topic/context to the current conversation. If they appear to be from a different feature:
+
+> ⚠️ A `prd.md` from a previous session was found.
+>
+> **[1] Overwrite** — replace it with the new PRD
+> **[2] Run forge-new first** — archive or discard the old cycle, then return here
+> **[3] Cancel**
+
+Wait for the user's choice before proceeding. If the user's intent is clearly a continuation of the same feature, skip this guard.
+
 ## Input artifact
 
-Before writing, check whether `forge/decisions.md` exists. If it does, read it and use the resolved decisions, constraints, and non-goals as primary input. Merge that content with the current conversation context. Do not re-ask questions already answered there.
+Before writing, check whether `forge/current/decisions.md` exists. If it does, read it and use the resolved decisions, constraints, and non-goals as primary input. Merge that content with the current conversation context. Do not re-ask questions already answered there.
 
 ## Process
 
@@ -22,7 +36,7 @@ Check with the user that these seams match their expectations.
 
 ## Output artifact
 
-Save the completed PRD as `forge/prd.md` before or alongside publishing to the tracker. Create the `forge/` directory if it does not exist. This file is the input for `to-issue`.
+Save the completed PRD as `forge/current/prd.md` before or alongside publishing to the tracker. Create `forge/current/` if it does not exist. This file is the input for `to-issue`.
 
 <prd-template>
 
