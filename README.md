@@ -11,7 +11,7 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 **v0.1.1** — bug fix release.
 
-Ships six skills covering the full engineering lifecycle: compressed communication, design review, automated issue implementation, architecture decision records, issue tracking, and PRD authoring.
+Ships five skills covering the full engineering lifecycle: compressed communication, design review, PRD authoring, issue tracking, and automated issue implementation.
 
 📋 [Full changelog →](CHANGELOG.md)
 
@@ -51,7 +51,7 @@ pi install .
 
 ## Workflow: From Idea to Implementation
 
-The six skills form a natural end-to-end pipeline. Each step produces a Markdown artifact that becomes the structured input for the next step — so you can close a session at any point and resume without losing context.
+The five skills form a natural end-to-end pipeline. Each step produces a Markdown artifact that becomes the structured input for the next step — so you can close a session at any point and resume without losing context.
 
 ```
 idea
@@ -62,20 +62,17 @@ idea
   ▼                                              ▼
 ② to-prd ──── reads forge/decisions.md ── produces → forge/prd.md
   │                                              │
-  ├──────────────────────────────────────────────┤
-  │                                              ▼
-③ to-adr ─── reads forge/decisions.md           produces → forge/adrs/<slug>.md
-              + forge/prd.md ────────────────── (one per decision)
-  │
-  ▼
-④ to-issue ── reads forge/prd.md ────────── produces → forge/issues/<slug>.md
+  ▼                                              │
+③ to-issue ── reads forge/prd.md ────────── produces → forge/issues/<slug>.md
   │                                                      + tracker issue
   ▼
-⑤ ralph ───── reads forge/issues/*.md ───── produces → forge/issues/agent.<slug>.md
+④ ralph ───── reads forge/issues/*.md ───── produces → forge/issues/agent.<slug>.md
   │
   ▼
 finished implementation
 ```
+
+> **Tip:** activate `caveman` at any point in the pipeline to cut token usage by ~75%.
 
 **① grill-me — stress-test the idea**  
 Before writing anything down, let Pi interview you about every aspect of the idea. Each question comes with a recommended answer. Work through all branches until there are no open decisions. When complete, Pi writes **`forge/decisions.md`** — a structured table of every question, chosen answer, and rationale.
@@ -83,16 +80,11 @@ Before writing anything down, let Pi interview you about every aspect of the ide
 **② to-prd — write the PRD**  
 `to-prd` reads `forge/decisions.md` as primary input and synthesises the conversation into a structured PRD. The result is saved as **`forge/prd.md`** and published to the issue tracker.
 
-**③ to-adr — record architecture decisions**  
-`to-adr` reads both `forge/decisions.md` and `forge/prd.md` to pre-fill context. Run it once per significant technical choice. Each ADR is saved as **`forge/adrs/<kebab-case-title>.md`**. Repeat this step for every decision that warrants a permanent record.
-
-**④ to-issue — publish the work item**  
+**③ to-issue — publish the work item**  
 `to-issue` reads `forge/prd.md` and publishes the issue to the tracker with the `ready-for-agent` label. It also saves a local copy as **`forge/issues/<slug>.md`** with `status: todo` frontmatter — the exact format ralph expects.
 
-**⑤ ralph — implement**  
+**④ ralph — implement**  
 `ralph` reads every `forge/issues/*.md` file where `status: todo`, calls the Pi CLI to implement the described work, runs tests, and sets `status: done` when verified. Each processed issue produces a **`forge/issues/agent.<slug>.md`** audit file.
-
-> **Tip:** activate `caveman` mode at the start of any long session to cut token usage by ~75% across all steps.
 
 ---
 
@@ -147,19 +139,6 @@ python skills/ralph/ralph.py --directory ./forge/issues --cli "claude" --no-prin
 
 Issue files are plain Markdown. Ralph iterates until tests pass, then writes an `agent.<filename>.md` result file.
 
-### to-adr
-
-Generates a complete Architecture Decision Record from your conversation context and writes it to the repository at an agreed path. Defaults to `forge/adrs/` if no project-specific ADR location is known.
-
-**Invoke:** say `create ADR`, `document this decision`, `capture trade-offs for …`, or `write ADR for …`
-
-```
-You: create an ADR for switching from REST to GraphQL
-Pi:  [asks for ADR location if unknown, then writes forge/adrs/use-graphql-for-api.md]
-```
-
-The generated ADR follows a fixed template covering Context, Decision, Rationale, Options Considered, Consequences, Implementation, Risks, and References.
-
 ### to-issue
 
 Converts the current conversation context and codebase understanding into a ready-for-implementation tracker issue and publishes it to the project issue tracker. Asks which tracker you use (GitHub Issues, GitLab, Jira, Linear, etc.) and which triage label to apply if not already known.
@@ -204,13 +183,11 @@ ForgeFlow supports seven phases:
 ├── forge/                # Workflow artifacts (commit or gitignore — team preference)
 │   ├── decisions.md      # ← written by grill-me
 │   ├── prd.md            # ← written by to-prd
-│   ├── adrs/             # ← written by to-adr
 │   └── issues/           # ← written by to-issue, read by ralph
 ├── skills/               # Pi skills (each with a SKILL.md)
 │   ├── caveman/
 │   ├── grill-me/
 │   ├── ralph/
-│   ├── to-adr/
 │   ├── to-issue/
 │   └── to-prd/
 ├── prompts/              # Reusable prompt templates
