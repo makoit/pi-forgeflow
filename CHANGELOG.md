@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-03
+
+### Added
+
+- `forge-chain` skill — orchestrates the full ForgeFlow pipeline in sequence (`grill-me` → `to-prd` → `to-issue` → `ralph`). Artifact-driven: auto-detects the current phase from `forge/` contents and resumes where the last session left off. Offers caveman mode on first run for leaner multi-turn output.
+
 ## [0.2.0] - 2026-07-03
 
 ### Added
@@ -50,7 +56,8 @@ Initial public release of **ForgeFlow** — a Pi package for professional softwa
 - CI workflow (`.github/workflows/ci.yml`) running `npm test` on every push
 - Release workflow (`.github/workflows/release.yml`)
 
-[Unreleased]: https://github.com/makoit/pi-forgeflow/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/makoit/pi-forgeflow/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/makoit/pi-forgeflow/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/makoit/pi-forgeflow/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/makoit/pi-forgeflow/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/makoit/pi-forgeflow/releases/tag/v0.1.0
