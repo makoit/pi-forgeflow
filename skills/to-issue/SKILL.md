@@ -1,37 +1,64 @@
 ---
 name: to-issue
-description: >
-  Convert conversation context (or an existing forge/prd.md) into a tracker issue and publish it
-  to the project issue tracker. Saves a local copy at forge/issues/<slug>.md with status: todo
-  for use with ralph. Use when user wants to publish work to the tracker, create a
-  ready-for-implementation issue, or says "use to-issue".
+description: Break a plan, spec, or PRD into independently-grabbable issues on the project issue tracker using tracer-bullet vertical slices.
+disable-model-invocation: true
 ---
 
-This skill takes the current conversation context and codebase understanding and produces a ready-for-implementation tracker issue. Do NOT interview the user — just synthesize what you already know.
+# To Issue
 
-Before publishing, ask the user which issue tracker they use (GitHub Issues, GitLab Issues, Jira, Linear, etc.) and what triage label (if any) should be applied — unless this has already been established in the conversation.
-
-## Input artifact
-
-Before writing, check whether `forge/prd.md` exists. If it does, read it and use it as the primary source. Merge with the current conversation context. Do not re-derive information already captured there.
+Break a plan into independently-grabbable issues using vertical slices (tracer bullets).
 
 ## Process
 
-1. Explore the repo to understand the current state of the codebase, if you haven't already. If the codebase is empty or does not yet exist, skip this step and base the issue on the conversation context alone. Use the project's domain glossary vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
+### 1. Gather context
 
-2. Sketch out the major modules you will need to build or modify to complete the implementation. Actively look for opportunities to extract deep modules that can be tested in isolation.
+Work from whatever is already in the conversation context. If the user passes an issue reference (issue number, URL, or path) as an argument, fetch it from the issue tracker and read its full body and comments.
 
-A deep module (as opposed to a shallow module) is one which encapsulates a lot of functionality in a simple, testable interface which rarely changes.
+Check whether `forge/prd.md` exists. If it does, read it and use it as the primary source. Merge with the current conversation context. Do not re-derive information already captured there.
 
-Check with the user that these modules match their expectations. Check with the user which modules they want tests written for.
+### 2. Explore the codebase (optional)
 
-3. Write the PRD using the template below, then publish it to the project issue tracker. Apply the team's agreed triage label if one was provided (e.g., `ready-for-agent`, `ready-for-review`); skip the label if unknown.
+If you have not already explored the codebase, do so to understand the current state of the code. Issue titles and descriptions should use the project's domain glossary vocabulary, and respect ADRs in the area you're touching.
 
-## Output artifact
+Look for opportunities to prefactor the code to make the implementation easier. "Make the change easy, then make the easy change."
 
-After publishing to the tracker, also save the issue as a local Markdown file at `forge/issues/<kebab-case-title>.md`. Create `forge/issues/` if it does not exist. This file is the direct input for `ralph`.
+### 3. Draft vertical slices
 
-Use this frontmatter in the local issue file:
+Break the plan into **tracer bullet** issues. Each issue is a thin vertical slice that cuts through ALL integration layers end-to-end, NOT a horizontal slice of one layer.
+
+<vertical-slice-rules>
+
+- Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests)
+- A completed slice is demoable or verifiable on its own
+- Any prefactoring should be done first
+
+</vertical-slice-rules>
+
+### 4. Quiz the user
+
+Present the proposed breakdown as a numbered list. For each slice, show:
+
+- **Title**: short descriptive name
+- **Blocked by**: which other slices (if any) must complete first
+- **User stories covered**: which user stories this addresses (if the source material has them)
+
+Ask the user:
+
+- Does the granularity feel right? (too coarse / too fine)
+- Are the dependency relationships correct?
+- Should any slices be merged or split further?
+
+Iterate until the user approves the breakdown.
+
+### 5. Publish the issues to the issue tracker
+
+For each approved slice, publish a new issue to the issue tracker. Use the issue body template below. These issues are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
+
+Publish issues in dependency order (blockers first) so you can reference real issue identifiers in the "Blocked by" field.
+
+After publishing, save each issue as a local Markdown file at `forge/issues/<kebab-case-title>.md`. Create `forge/issues/` if it does not exist. These files are the direct input for `ralph`.
+
+Use this frontmatter in each local issue file:
 
 ```markdown
 ---
@@ -41,60 +68,31 @@ tracker-url: <link to the published tracker issue>
 ---
 ```
 
-followed by the full PRD body.
+followed by the full issue body.
 
-<prd-template>
+Do NOT close or modify any parent issue.
 
-## Problem Statement
+<issue-template>
+## Parent
 
-The problem that the user is facing, from the user's perspective.
+A reference to the parent issue on the issue tracker (if the source was an existing issue, otherwise omit this section).
 
-## Solution
+## What to build
 
-The solution to the problem, from the user's perspective.
+A concise description of this vertical slice. Describe the end-to-end behavior, not layer-by-layer implementation.
 
-## User Stories
+Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it here and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+## Acceptance criteria
 
-1. As an <actor>, I want a <feature>, so that <benefit>
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
 
-<user-story-example>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
-</user-story-example>
+## Blocked by
 
-This list of user stories should be extremely extensive and cover all aspects of the feature.
+- A reference to the blocking ticket (if any)
 
-## Implementation Decisions
+Or "None - can start immediately" if no blockers.
 
-A list of implementation decisions that were made. This can include:
-
-- The modules that will be built/modified
-- The interfaces of those modules that will be modified
-- Technical clarifications from the developer
-- Architectural decisions
-- Schema changes
-- API contracts
-- Specific interactions
-
-Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
-
-Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
-
-## Testing Decisions
-
-A list of testing decisions that were made. Include:
-
-- A description of what makes a good test (only test external behavior, not implementation details)
-- Which modules will be tested
-- Prior art for the tests (i.e. similar types of tests in the codebase)
-
-## Out of Scope
-
-A description of the things that are out of scope for this PRD.
-
-## Further Notes
-
-Any further notes about the feature.
-
-</prd-template>
+</issue-template>
