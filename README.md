@@ -1,6 +1,6 @@
 # ForgeFlow
 
-[![version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.5.0)
+[![version](https://img.shields.io/badge/version-0.5.1-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.5.1)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/makoit/pi-forgeflow/blob/main/LICENSE)
 
 **ForgeFlow** is a Pi package for professional software engineering workflows.
@@ -9,7 +9,7 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 ## Current Release
 
-**v0.5.0** — adds `create-agents-md` skill: an interactive scaffold that generates a complete, project-specific `AGENTS.md` at the repository root. Auto-detects stack details (language, package manager, test framework, linter, CI/CD, deployment target) from files on disk, then asks 14 focused questions covering project purpose, type, commands, key directories, agent mission, git conventions, and deployment. Fully technology-agnostic — works with any language or ecosystem.
+**v0.5.1** — ralph bugfix release. The issue loop now ignores its own `agent.*.md` output files, so re-running against the same directory no longer feeds prior agent transcripts back in as new issues. The prompt now carries the full path to the issue file, so the agent can reliably set `status: done` regardless of its working directory. The published npm package no longer ships Python bytecode. Adds an end-to-end regression test for the ralph loop.
 
 Ships nine skills covering the full engineering lifecycle: a one-command chain, cycle management, compressed communication, teaching mode, design review, PRD authoring, issue tracking, automated issue implementation, and interactive `AGENTS.md` scaffolding.
 
@@ -150,7 +150,7 @@ Pi:  [reads forge/current/prd.md, proposes vertical slices]
 
 ### ralph
 
-Runs an automated agent loop over every `.md` file in a directory. For each issue it calls the Pi CLI to implement the described work, runs tests, and marks the issue `done` when verified. Produces a **`forge/current/issues/agent.<slug>.md`** audit file per issue.
+Runs an automated agent loop over every `.md` file in a directory. For each issue it calls the Pi CLI to implement the described work, runs tests, and marks the issue `done` when verified. Produces a **`forge/current/issues/agent.<slug>.md`** audit file per issue. Safe to re-run: issues marked `done` and the `agent.*` audit files are skipped.
 
 **Invoke:** say `use ralph` or run `ralph.py` directly:
 

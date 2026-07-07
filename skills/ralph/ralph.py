@@ -120,6 +120,8 @@ def ralph(args: Args):
         sys.exit(1)
 
     for issue in sorted(directory.glob("*.md")):
+        if issue.name.startswith("agent."):
+            continue
         status = get_status(issue)
         if status == "done":
             print(f"Skipping {issue} (status: done)")
@@ -129,7 +131,7 @@ def ralph(args: Args):
 
         issue_content = issue.read_text()
         full_prompt = (
-            f"{args.prompt}\n\nIssue file ({issue.name}):\n\n{issue_content}"
+            f"{args.prompt}\n\nIssue file ({issue.resolve()}):\n\n{issue_content}"
         )
 
         cmd = [*cli_parts]

@@ -26,7 +26,7 @@ tracker-url: <link to tracker issue>
 ---
 ```
 
-Ralph only processes files where `status` is `todo` or `in-progress`. Files with `status: done` are skipped.
+Ralph skips files with `status: done` and its own `agent.*` output files; everything else (`todo`, `in-progress`, or no status) is processed.
 
 ## Usage
 
@@ -54,8 +54,10 @@ Options:
 
 Default prompt:
 
-> Implement the issue described in the given issue file. Rebuild the project and run newly implemented unit tests. Iterate until build and tests succeed. Set `status` to `done` in the issue frontmatter when resolved.
+> Implement the issue described in the given issues-file. Rebuild the project and run newly implemented unit tests. Iterate until build and tests succeed. Modify the issue status to 'done' when the issue is resolved.
+
+The prompt is followed by the issue file's full path and content, so the agent can locate the file and update its frontmatter.
 
 ## Output artifact
 
-For each processed issue `<name>.md`, ralph writes `agent.<name>.md` containing the full agent response. These files form an audit trail of what was implemented and how.
+For each processed issue `<name>.md`, ralph writes `agent.<name>.md` containing the full agent response. These files form an audit trail of what was implemented and how. Ralph ignores `agent.*` files when scanning for issues, so re-running against the same directory is safe.
