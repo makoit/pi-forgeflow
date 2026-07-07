@@ -30,6 +30,10 @@ description: One-sentence description of when and how to invoke this skill.
 
 Extensions (executable code) go under `extensions/` or alongside a skill. They receive additional scrutiny — document behavior, avoid side effects, and declare any peer dependencies.
 
+## Documentation
+
+User-facing documentation lives in [docs/](docs/README.md). When you add or change a skill, update its page under `docs/skills/` (and the overview tables in `docs/README.md` and `docs/skills/README.md`) in the same pull request.
+
 ## Commit Messages
 
 Use the [Conventional Commits](https://www.conventionalcommits.org/) format:
