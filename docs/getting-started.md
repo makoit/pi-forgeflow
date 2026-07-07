@@ -17,7 +17,7 @@ pi install https://github.com/makoit/pi-forgeflow
 To pin to a specific release:
 
 ```bash
-pi install git:github.com/makoit/pi-forgeflow@v0.5.1
+pi install git:github.com/makoit/pi-forgeflow@v0.6.0
 ```
 
 To install from a local clone (development):

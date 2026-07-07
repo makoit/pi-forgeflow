@@ -1,6 +1,6 @@
 {
   "name": "@martinkovacs/pi-forgeflow",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "ForgeFlow — a Pi package for professional software engineering workflows covering intake, specification, architecture, implementation, verification, review, and release.",
   "keywords": [
     "pi-package",
@@ -17,8 +17,6 @@
   },
   "files": [
     "skills/",
-    "!**/__pycache__",
-    "!**/*.pyc",
     "prompts/",
     "extensions/",
     "themes/",

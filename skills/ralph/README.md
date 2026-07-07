@@ -32,7 +32,7 @@ For each active issue, ralph reads the issue file and embeds both its full resol
 - `--model <model>` — only added when `-m`/`--model` is provided
 - `<prompt + issue path + issue content>` — the implementation instruction with the issue body inline
 
-The default CLI is `co` and the default prompt instructs the agent to:
+The default CLI is `pi` (override with `--cli` or the `RALPH_CLI` environment variable; pick a model with `--model` or `RALPH_MODEL`) and the default prompt instructs the agent to:
 
 > Implement the issue described in the given issues-file. Rebuild the project and run newly implemented unit tests. Iterate until build and tests succeed. Modify the issue status to 'done' when the issue is resolved.
 
@@ -44,7 +44,7 @@ Ralph captures the full stdout from the agent and writes it to `agent.<filename>
 
 ### 5. Error handling
 
-If the Pi CLI exits with a non-zero status for a given issue, ralph logs the error and **continues to the next issue**. A single failure does not abort the whole run.
+If the agent CLI exits with a non-zero status for a given issue, ralph logs the error and **continues to the next issue**. A single failure does not abort the whole run.
 
 ---
 
@@ -77,13 +77,13 @@ Ralph works well with issues produced by the [`to-issue`](../to-issue/) skill.
 ## Usage
 
 ```bash
-python skills/ralph/ralph.py --directory ./forge/current/issues
+node skills/ralph/ralph.mjs --directory ./forge/current/issues
 ```
 
 Or using the positional form:
 
 ```bash
-python skills/ralph/ralph.py ./forge/current/issues
+node skills/ralph/ralph.mjs ./forge/current/issues
 ```
 
 ### Options
@@ -91,8 +91,8 @@ python skills/ralph/ralph.py ./forge/current/issues
 | Flag | Default | Description |
 |------|---------|-------------|
 | `directory` | required | Directory containing issue `.md` files (positional or `-d`) |
-| `-c`, `--cli` | `co` | Agent CLI command to invoke (can include flags) |
-| `-m`, `--model` | _(omitted)_ | Model flag passed to the agent CLI |
+| `-c`, `--cli` | `pi` (or `$RALPH_CLI`) | Agent CLI command to invoke (can include flags) |
+| `-m`, `--model` | `$RALPH_MODEL` or omitted | Model flag passed to the agent CLI |
 | `-p`, `--prompt` | see above | Override the default implementation prompt |
 | `--no-print` | false | Omit `--print` from the CLI invocation (for CLIs that do not support it) |
 
@@ -119,5 +119,5 @@ Ralph is safe to re-run at any time. Issues already marked `status: done` are sk
 
 ## Requirements
 
-- Python 3.8+
-- An agent CLI (`co`, `pi`, `claude`, etc.) available on `PATH`
+- Node.js 18+ (already present wherever the `pi` CLI runs — no separate installation needed)
+- An agent CLI (`pi` by default; `co`, `claude`, etc. via `--cli`) available on `PATH`

@@ -97,7 +97,7 @@ Before launching ralph, confirm with the user:
 If confirmed, run ralph by invoking:
 
 ```bash
-python skills/ralph/ralph.py --directory ./forge/current/issues
+node skills/ralph/ralph.mjs --directory ./forge/current/issues
 ```
 
 When complete:

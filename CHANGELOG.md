@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-07-07
+
+### Changed
+
+- `ralph` — ported from Python (`ralph.py`) to Node.js (`skills/ralph/ralph.mjs`), removing the Python 3.8+ requirement entirely. Node is already present wherever the `pi` CLI runs, so ralph now needs no runtime beyond what pi itself requires. Behavior, flags, environment variables, output format, and exit codes are unchanged; invoke with `node skills/ralph/ralph.mjs` instead of `python skills/ralph/ralph.py`. The `!**/__pycache__` / `!**/*.pyc` npm packaging exclusions are no longer needed and were removed.
+
+### Added
+
+- `ralph` — live progress feedback while the loop runs. Previously the agent subprocess was fully buffered, so a run gave no output for minutes at a time. Now ralph shows: an overall progress bar with percent across pending issues, a `[i/N]` counter with the current issue's file name and title, a spinner line (TTY only) with elapsed time and the agent's latest output line, and a per-issue outcome (`✓ done` / `⚠ incomplete` / `✗ failed`) followed by an end-of-run summary.
+- `ralph` — new `-v`/`--verbose` flag streams the agent's full output live instead of the one-line status.
+- `ralph` — the agent transcript (`agent.<issue>.md`) is now written even when the agent CLI exits non-zero, preserving the partial audit trail; the last stderr lines are printed on failure.
+
+### Changed
+
+- `ralph` — the default agent CLI is now `pi` (this is a Pi package; the previous default `co` was a leftover). The CLI and model can be defined once via the `RALPH_CLI` and `RALPH_MODEL` environment variables; explicit `--cli`/`--model` flags still take precedence. The model value is passed through to `pi --model`, so any Pi model pattern works (e.g. `anthropic/claude-sonnet-5`, `gpt-5.4:medium`).
+- `ralph` — exit code now reflects the outcome: `0` only when every pending issue ended up `status: done`, `1` if any issue failed or finished without being marked done. Previously ralph always exited `0`.
+- `ralph` — after each agent run the issue's frontmatter is re-checked; a run that finishes without setting `status: done` is reported as incomplete instead of "Finished".
+
+[0.6.0]: https://github.com/makoit/pi-forgeflow/compare/v0.5.1...v0.6.0
+
 ## [0.5.1] - 2026-07-07
 
 ### Fixed

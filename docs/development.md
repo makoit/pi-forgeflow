@@ -64,7 +64,7 @@ The `description` is what Pi matches against user requests, so it should name th
 
 New skills must also be registered in the `pi.skills` array in `package.json`.
 
-Extensions (executable code) go under `extensions/` or alongside a skill (like `skills/ralph/ralph.py`). They receive additional scrutiny — document behavior, avoid side effects, and declare any peer dependencies.
+Extensions (executable code) go under `extensions/` or alongside a skill (like `skills/ralph/ralph.mjs`). They receive additional scrutiny — document behavior, avoid side effects, and declare any peer dependencies.
 
 ## Documentation
 

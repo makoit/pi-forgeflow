@@ -1,6 +1,6 @@
 # ForgeFlow
 
-[![version](https://img.shields.io/badge/version-0.5.1-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.5.1)
+[![version](https://img.shields.io/badge/version-0.6.0-blue)](https://github.com/makoit/pi-forgeflow/releases/tag/v0.6.0)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/makoit/pi-forgeflow/blob/main/LICENSE)
 
 **ForgeFlow** is a Pi package for professional software engineering workflows.
@@ -11,7 +11,7 @@ It helps Pi coding agents support disciplined software delivery across the full 
 
 ## Current Release
 
-**v0.5.1** — ralph bugfix release. The issue loop now ignores its own `agent.*.md` output files, so re-running against the same directory no longer feeds prior agent transcripts back in as new issues. The prompt now carries the full path to the issue file, so the agent can reliably set `status: done` regardless of its working directory. The published npm package no longer ships Python bytecode. Adds an end-to-end regression test for the ralph loop.
+**v0.6.0** — ralph overhaul. The issue loop was ported from Python to Node.js (`skills/ralph/ralph.mjs`), so it needs no runtime beyond what the `pi` CLI already requires. It now shows live progress while running: an overall progress bar with percent, the issue currently being implemented, a spinner with elapsed time and the agent's latest output, per-issue outcomes (`✓ done` / `⚠ incomplete` / `✗ failed`), and an end-of-run summary. The default agent CLI is now `pi`, with `RALPH_CLI`/`RALPH_MODEL` environment variables for persistent overrides, and the exit code reflects whether all issues actually ended up done.
 
 📋 [Full changelog →](CHANGELOG.md)
 
