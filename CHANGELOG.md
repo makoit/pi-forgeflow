@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-07-07
+
+### Fixed
+
+- `ralph` — the issue loop now skips its own `agent.*.md` output files when scanning a directory. Previously a second run would pick up prior agent transcripts (which have no frontmatter, so no `done` status) and feed them back to the agent as new issues, producing `agent.agent.*.md` cascades.
+- `ralph` — the prompt now embeds the full resolved path of the issue file instead of just its basename, so the agent can reliably locate the file and set `status: done` in its frontmatter. Previously the status could never be updated when the agent ran from a different working directory, causing issues to be reprocessed on every run.
+- Published npm package no longer ships Python bytecode (`skills/ralph/__pycache__/*.pyc`) — excluded via `!**/__pycache__` and `!**/*.pyc` negation patterns in the `files` allowlist.
+
+### Added
+
+- `tests/ralph.test.mjs` — end-to-end regression test that runs `ralph.py` against a temp directory with a stub agent CLI and verifies: `todo` issues are processed, `done` issues are skipped, `agent.*` files are ignored, and the prompt contains the full issue path.
+
+[0.5.1]: https://github.com/makoit/pi-forgeflow/compare/v0.5.0...v0.5.1
+
 ## [0.5.0] - 2026-07-03
 
 ### Added
@@ -80,7 +94,7 @@ Initial public release of **ForgeFlow** — a Pi package for professional softwa
 - CI workflow (`.github/workflows/ci.yml`) running `npm test` on every push
 - Release workflow (`.github/workflows/release.yml`)
 
-[Unreleased]: https://github.com/makoit/pi-forgeflow/compare/v0.3.0...HEAD
+[0.4.0]: https://github.com/makoit/pi-forgeflow/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/makoit/pi-forgeflow/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/makoit/pi-forgeflow/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/makoit/pi-forgeflow/compare/v0.1.0...v0.1.1

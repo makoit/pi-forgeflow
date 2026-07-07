@@ -8,7 +8,7 @@ Ralph is an automated agent loop that works through a directory of Markdown issu
 
 ### 1. Discovery
 
-Ralph scans the given directory for all `*.md` files and sorts them alphabetically. This gives a consistent, predictable processing order across runs.
+Ralph scans the given directory for all `*.md` files and sorts them alphabetically. This gives a consistent, predictable processing order across runs. Files whose name starts with `agent.` — ralph's own output transcripts — are ignored, so re-running against the same directory never feeds prior results back in as issues.
 
 ### 2. Status check
 
@@ -26,11 +26,11 @@ Files with `status: done` are **skipped**. Everything else (`todo`, `in-progress
 
 ### 3. Agent invocation
 
-For each active issue, ralph reads the issue file and embeds its full content into the prompt. It then invokes the configured agent CLI with:
+For each active issue, ralph reads the issue file and embeds both its full resolved path and its content into the prompt, so the agent can locate the file on disk and update its frontmatter. It then invokes the configured agent CLI with:
 
 - `--print` — non-interactive mode; output goes to stdout (omitted when `--no-print` is set)
 - `--model <model>` — only added when `-m`/`--model` is provided
-- `<prompt + issue content>` — the implementation instruction with the issue body inline
+- `<prompt + issue path + issue content>` — the implementation instruction with the issue body inline
 
 The default CLI is `co` and the default prompt instructs the agent to:
 
@@ -113,7 +113,7 @@ forge/current/issues/
 
 ## Re-running
 
-Ralph is safe to re-run at any time. Issues already marked `status: done` are skipped. Issues that failed or were not yet completed will be retried.
+Ralph is safe to re-run at any time. Issues already marked `status: done` are skipped, and the `agent.*` audit files are never treated as issues. Issues that failed or were not yet completed will be retried.
 
 ---
 
